@@ -17,10 +17,16 @@ int main(void)
 {
   const char *memory = GetHTML(baseStruct.baseURL);
 
-  struct JobsTable *data;
-  data = ProcessData(memory);
-
+  struct JobsTable *data = ProcessData(memory);
+  if (data == NULL)
+  {
+    printf("\nNo Data to Process\n Exiting...");
+    return -1;
+  }
   showResults(data->memory, data->size);
+
+  // Cleaning data...
+  free((void *)data);
 
   return 0;
 };
