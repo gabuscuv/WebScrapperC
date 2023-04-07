@@ -1,6 +1,7 @@
-#include <stdio.h>
+typedef __SIZE_TYPE__ size_t;
 
-struct Memory {
+struct Memory
+{
   char *memory;
   size_t size;
 };
