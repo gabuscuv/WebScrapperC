@@ -1,6 +1,7 @@
-struct base{
-const char *  Date;
-const char *  Position;
-const char *  Location;
-const char *  Group;
+#include <stdio.h>
+#include "JobEntry.h"
+
+struct jobTable {
+  struct JobEntry *memory[0];
+  size_t size;
 };
