@@ -7,7 +7,9 @@
 #include "Structs/baseURL.h"
 #include "Structs/JobEntry.h"
 #include "Structs/JobsTable.h"
+
 #include "Enums/Categories.h"
+#include "Enums/Fields.h"
 
 #include "utils/htmlGetter.h"
 
@@ -59,15 +61,10 @@ struct JobsTable *ProcessData(const char *memory)
   struct JobEntry job;
   struct JobEntry jobTable[result->nodesetval->nodeNr / Fields];
 
-  const char *tmp[Fields];
+  const char *tmp[Fields + ExtraFields];
 
   for (i = 0; i < result->nodesetval->nodeNr; i += Fields + 1)
   {
-    if (result->nodesetval->nodeTab[i]->children == NULL)
-    {
-      continue;
-    }
-
     for (j = 0; j <= Fields; j++)
     {
       if (result->nodesetval->nodeTab[i + j]->children->content != NULL)
@@ -76,21 +73,27 @@ struct JobsTable *ProcessData(const char *memory)
       }
       else
       {
+        if (j == Fields_Position)
+        {
+          tmp[Fields_Link] = (const char *)result->nodesetval->nodeTab[i + j]->children->properties->children->content;
+        };
         tmp[j] = (const char *)result->nodesetval->nodeTab[i + j]->children->children->content;
       }
 
       xmlFree(result->nodesetval->nodeTab[i + j]);
     }
 
-    strcpy(job.Date, tmp[0]);
-    strcpy(job.Position, tmp[1]);
-    strcpy(job.Location, tmp[2]);
-    strcpy(job.Group, tmp[3]);
+    strcpy(job.Link, tmp[Fields_Link]);
 
-    free((void *)tmp[0]);
-    free((void *)tmp[1]);
-    free((void *)tmp[2]);
-    free((void *)tmp[3]);
+    strcpy(job.Date, tmp[Fields_Date]);
+    strcpy(job.Position, tmp[Fields_Position]);
+    strcpy(job.Location, tmp[Fields_Location]);
+    strcpy(job.Group, tmp[Fields_Group]);
+
+    for (j = 0; j < Fields + ExtraFields; j++)
+    {
+      free((void *)tmp[j]);
+    }
 
     jobTable[Arraycounter] = job;
     Arraycounter++;
@@ -103,6 +106,8 @@ struct JobsTable *ProcessData(const char *memory)
   output->memory = jobTable;
   output->size = Arraycounter;
 
+  ~Arraycounter;
+
   return output;
 }
 
@@ -112,6 +117,8 @@ void showResults(struct JobEntry *job, int len)
   size_t i;
   for (i = 0; i < len; i++)
   {
-    printf("Date: %s, Position: %s, Location %s, Business:%s\n", job[i].Date, job[i].Position, job[i].Location, job[i].Group);
+    printf("Date: %s, Position: %s, Location: %s, Business: %s, Link: %s", 
+          job[i].Date, job[i].Position, job[i].Location, job[i].Group, job[i].Link);
+    printf("\n");
   }
 }
