@@ -1,14 +1,13 @@
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "curl/curl.h"
 #include "curl/easy.h"
 
-#include <stdio.h>
-
-#include "htmlGetter.h"
-
 #include "../Structs/memory.h"
-#include <string.h>
 
-#include "stdlib.h"
+#include "HTMLGetter.h"
 
 static struct Memory memory;
 
